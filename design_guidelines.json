@@ -1,0 +1,107 @@
+{
+  "theme": "dark",
+  "archetype": "5 (Luxury) blended with 7 (Electric & Neon)",
+  "instructions_to_main_agent": "You are building a world-class AI Growth Agency website. Adhere STRICTLY to the dark theme, using ONLY the provided color palette. Implement smooth scrolling (Lenis), a custom cursor, parallax effects, and glowing gradients. Do NOT use generic fonts like Inter for headings. Use Framer Motion extensively for scroll reveals, hover states, and micro-interactions. Create a high-end, cinematic feel with lots of negative space. ALL interactive elements MUST have data-testid attributes.",
+  "colors": {
+    "background": "#050816",
+    "surface": "#101827",
+    "primary": "#6C63FF",
+    "secondary": "#00E5FF",
+    "accent": "#8B5CF6",
+    "text_primary": "#FFFFFF",
+    "text_secondary": "#A8B2D1",
+    "border": "rgba(168, 178, 209, 0.15)",
+    "glass": "rgba(16, 24, 39, 0.6)"
+  },
+  "typography": {
+    "fonts_to_import": [
+      "https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,700,900&display=swap",
+      "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    ],
+    "headings": {
+      "family": "'Cabinet Grotesk', sans-serif",
+      "weights": ["700", "800", "900"],
+      "classes": "font-['Cabinet_Grotesk'] tracking-tighter"
+    },
+    "body": {
+      "family": "'Manrope', sans-serif",
+      "weights": ["400", "500", "600"],
+      "classes": "font-['Manrope'] tracking-tight text-[#A8B2D1]"
+    },
+    "mono": {
+      "family": "'JetBrains Mono', monospace",
+      "weights": ["400", "500"],
+      "classes": "font-['JetBrains_Mono'] tracking-widest uppercase text-xs"
+    }
+  },
+  "spacing_and_layout": {
+    "container": "max-w-7xl mx-auto px-6 md:px-12 lg:px-24",
+    "section_padding": "py-24 md:py-32 lg:py-40",
+    "grid_gap": "gap-6 md:gap-8 lg:gap-12",
+    "bento_strategy": "Use asymmetric bento grids for Services and Case Studies. Avoid perfect symmetry."
+  },
+  "visual_enhancers": {
+    "glassmorphism": "backdrop-blur-xl bg-[#101827]/60 border border-white/5 shadow-2xl",
+    "glowing_button": "relative inline-flex h-14 items-center justify-center rounded-full bg-gradient-to-r from-[#6C63FF] via-[#8B5CF6] to-[#00E5FF] px-10 font-medium text-white shadow-[0_0_30px_rgba(108,99,255,0.4)] transition-all duration-300 hover:shadow-[0_0_50px_rgba(0,229,255,0.6)] hover:scale-105 active:scale-95",
+    "secondary_button": "relative inline-flex h-14 items-center justify-center rounded-full border border-white/10 bg-[#101827]/50 px-10 font-medium text-white backdrop-blur-md transition-all hover:bg-white/5 hover:border-white/20",
+    "animated_border": "relative rounded-2xl p-[1px] bg-gradient-to-b from-white/10 to-transparent hover:from-[#6C63FF] hover:to-[#00E5FF] transition-all duration-500",
+    "floating_blob": "absolute rounded-full mix-blend-screen filter blur-[100px] opacity-30 animate-pulse",
+    "cursor": "Implement a custom Framer Motion cursor that follows the mouse and expands on hoverable elements (mix-blend-difference or soft glow)."
+  },
+  "media_urls": {
+    "hero": {
+      "url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71",
+      "description": "Abstract data analytics dashboard for hero section visual"
+    },
+    "case_studies": [
+      {
+        "url": "https://images.pexels.com/photos/97080/pexels-photo-97080.jpeg",
+        "description": "Abstract chart visualization"
+      },
+      {
+        "url": "https://images.pexels.com/photos/36950598/pexels-photo-36950598.jpeg",
+        "description": "Tablet showing analytics"
+      }
+    ],
+    "testimonials": [
+      {
+        "url": "https://images.pexels.com/photos/4797690/pexels-photo-4797690.jpeg",
+        "description": "Professional headshot 1"
+      },
+      {
+        "url": "https://images.pexels.com/photos/14585727/pexels-photo-14585727.jpeg",
+        "description": "Professional headshot 2"
+      }
+    ],
+    "client_logos": [
+      {
+        "url": "https://images.pexels.com/photos/26576975/pexels-photo-26576975.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Apply CSS filter: grayscale(1) brightness(2) to make it pure white/transparent"
+      },
+      {
+        "url": "https://images.pexels.com/photos/21898300/pexels-photo-21898300.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Apply CSS filter: grayscale(1) brightness(2) to make it pure white/transparent"
+      }
+    ]
+  },
+  "components_blueprint": {
+    "page_loader": "Full screen black overlay (#050816). Center logo text growing with letter-spacing transition. Fades out upwards after 2 seconds.",
+    "navigation": "Sticky top glassmorphic header (bg-[#050816]/80 backdrop-blur-md). Logo left, links center, CTA right. Minimal bottom border (border-white/5).",
+    "hero": "Split layout. Left: Massive H1 (Cabinet Grotesk, text-5xl md:text-7xl), text gradient on 'AI Systems', two CTA buttons. Right: Framer Motion floating image of dashboard with glowing blob behind it. Bottom: Trusted by scrolling marquee (react-fast-marquee).",
+    "services": "Grid layout. 14 cards. Use a mix of col-span-1 and col-span-2 to create a bento-style look. Each card has an icon (lucide-react), title, short text, and subtle hover-gradient border.",
+    "why_choose_us": "4 columns. Large numbers or icons glowing with primary color. Minimalist typography.",
+    "process": "Vertical or horizontal timeline. Use Framer Motion useScroll to animate an SVG line drawing connecting the 5 steps as the user scrolls down.",
+    "case_studies": "Large cards. Left side text (Problem/Solution/Result), right side image with parallax effect.",
+    "testimonials": "Carousel using Embla or Framer Motion. 5-star icons, client photo, elegant quote typography.",
+    "stats": "Large numbers using react-countup, triggered when in view.",
+    "faq": "Shadcn Accordion. Dark theme overrides (bg-transparent, border-white/10).",
+    "footer": "Massive bottom padding. Huge brand text 'OVERXATECH' at the bottom. Links above it.",
+    "contact_page": "Split layout. Left: Contact info, large typography. Right: High-end form using Shadcn (dark inputs, glowing focus rings, floating labels if possible)."
+  },
+  "animation_guidelines": {
+    "library": "framer-motion",
+    "scroll_reveal": "{ initial: { opacity: 0, y: 40 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: '-100px' }, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }",
+    "stagger_children": "Use for grids and lists to cascade elements in.",
+    "parallax": "Use useScroll and useTransform for hero images and background blobs."
+  }
+}
