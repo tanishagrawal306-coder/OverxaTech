@@ -1,0 +1,33 @@
+{
+  "summary": "First-finish smoke test for OverxaTech AI Growth Agency site. All 6 backend contact/health/status endpoints pass. All 8 frontend flows pass (hero, book-call modal, hero-view scroll, testimonials carousel, FAQ accordion, nav, contact form submit, custom cursor). Email is intentionally disabled and correctly reported via /api/health email_enabled:false. Contact records persist to MongoDB (verified via GET /api/contacts).",
+  "tested_scope": ["backend", "frontend", "integration"],
+  "passed": [
+    "GET /api/health -> 200 {status:'ok', email_enabled:false}",
+    "POST /api/contact valid payload -> 201 with id + created_at",
+    "POST /api/contact invalid email -> 422",
+    "POST /api/contact missing name -> 422",
+    "GET /api/contacts -> 200 list including new contact",
+    "Legacy POST/GET /api/status -> 200 create+list working",
+    "Home loads, hero H1 shows 'We build AI systems that scale businesses.'",
+    "hero-cta-book opens book-call-modal",
+    "Book Call modal minimal-field submit -> POST /api/contact 201, modal closes, toast shown",
+    "hero-cta-view scrolls to #cases (element present)",
+    "testimonial-next advances carousel (dot index changes 0->1; Marcus Vale quote rendered)",
+    "faq-item-0 expands (data-state=open)",
+    "nav-link-contact navigates to /contact",
+    "Contact form full submit -> POST /api/contact returned 201, form reset, toast visible",
+    "Custom cursor: .cursor-dot and .cursor-ring exist in DOM on desktop viewport",
+    "No console errors observed"
+  ],
+  "failed": [],
+  "action_items": [],
+  "notes": [
+    "Contact page uses native <select> elements (not Radix) — tests use select_option(index=1).",
+    "Book Call modal input testids are book-name/business/email/phone/message and book-call-submit.",
+    "Testimonial content nodes have no dedicated data-testid on the quote itself; only nav buttons + dots. Consider adding data-testid='testimonial-quote' for deterministic content assertions.",
+    "Email notifications intentionally OFF (no Resend key); this is expected per problem statement."
+  ],
+  "success_rate": {"backend": "100%", "frontend": "100%"},
+  "retest_needed": false,
+  "full_testing_deferred": true
+}
