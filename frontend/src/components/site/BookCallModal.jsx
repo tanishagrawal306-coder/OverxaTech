@@ -17,8 +17,12 @@ export default function BookCallModal() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    if (!form.name || !form.email || !form.message) {
-      toast.error("Name, email and message are required.");
+    if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
+      toast.error("Please fill in name, email and message.");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      toast.error("Please enter a valid email.");
       return;
     }
     setLoading(true);
@@ -28,7 +32,17 @@ export default function BookCallModal() {
       setForm({ name: "", business: "", email: "", phone: "", service: "AI Automation", message: "" });
       closeModal();
     } catch (err) {
-      toast.error("Something went wrong. Please try again.");
+      const detail = err?.response?.data?.detail;
+      let msg = "We couldn't book your call. Please try again.";
+      if (Array.isArray(detail) && detail[0]?.msg) {
+        const field = detail[0].loc?.slice(-1)?.[0] || "field";
+        msg = `${field}: ${detail[0].msg}`;
+      } else if (typeof detail === "string") {
+        msg = detail;
+      } else if (err?.message === "Network Error") {
+        msg = "Network error — please check your connection and retry.";
+      }
+      toast.error(msg);
     } finally {
       setLoading(false);
     }

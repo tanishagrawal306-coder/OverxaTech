@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, ArrowRight, Sparkles } from "lucide-react";
+import { Mail, Phone, MapPin, ArrowRight, Sparkles, AlertCircle } from "lucide-react";
 import { CONTACT } from "@/constants/testIds";
 import { submitContact } from "@/lib/api";
 import { toast } from "sonner";
@@ -8,16 +8,34 @@ import { toast } from "sonner";
 const SERVICE_OPTIONS = ["AI Automation", "Meta Ads", "Google Ads", "Website / Funnels", "SEO", "Analytics", "Other"];
 const BUDGET_OPTIONS = ["< $5k / mo", "$5k – $10k / mo", "$10k – $25k / mo", "$25k+ / mo", "Not sure yet"];
 
+const initialForm = { name: "", business: "", email: "", phone: "", service: "AI Automation", budget: "$5k – $10k / mo", message: "" };
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default function Contact() {
-  const [form, setForm] = useState({ name: "", business: "", email: "", phone: "", service: "AI Automation", budget: "$5k – $10k / mo", message: "" });
+  const [form, setForm] = useState(initialForm);
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
-  const change = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+
+  const change = (k) => (e) => {
+    setForm((f) => ({ ...f, [k]: e.target.value }));
+    if (errors[k]) setErrors((prev) => ({ ...prev, [k]: undefined }));
+  };
+
+  const validate = () => {
+    const e = {};
+    if (!form.name.trim()) e.name = "Please enter your name.";
+    if (!form.email.trim()) e.email = "Please enter your email.";
+    else if (!EMAIL_RE.test(form.email.trim())) e.email = "Please enter a valid email.";
+    if (!form.message.trim()) e.message = "Please tell us a bit about your project.";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
 
   const submit = async (e) => {
     e.preventDefault();
-    if (!form.name || !form.email || !form.message) {
-      toast.error("Please fill in name, email and message.");
+    if (!validate()) {
+      toast.error("Please check the highlighted fields.");
       return;
     }
     setLoading(true);
@@ -25,9 +43,21 @@ export default function Contact() {
       await submitContact(form);
       toast.success("Thanks — we'll be in touch within 24 hours.");
       setSent(true);
-      setForm({ name: "", business: "", email: "", phone: "", service: "AI Automation", budget: "$5k – $10k / mo", message: "" });
+      setForm(initialForm);
+      setErrors({});
+      setTimeout(() => setSent(false), 4000);
     } catch (err) {
-      toast.error("Something went wrong. Please try again.");
+      const detail = err?.response?.data?.detail;
+      let msg = "We couldn't send your enquiry. Please try again.";
+      if (Array.isArray(detail) && detail[0]?.msg) {
+        const field = detail[0].loc?.slice(-1)?.[0] || "field";
+        msg = `${field}: ${detail[0].msg}`;
+      } else if (typeof detail === "string") {
+        msg = detail;
+      } else if (err?.message === "Network Error") {
+        msg = "Network error — please check your connection and retry.";
+      }
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -61,6 +91,7 @@ export default function Contact() {
 
         <motion.form
           onSubmit={submit}
+          noValidate
           data-testid={CONTACT.form}
           initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }}
           className="lg:col-span-7 gradient-border"
@@ -68,24 +99,27 @@ export default function Contact() {
           <div className="rounded-[1.25rem] glass-strong p-8 md:p-10">
             <h2 className="font-display text-2xl font-extrabold mb-6">Project Enquiry</h2>
             <div className="grid gap-4 md:grid-cols-2">
-              <Field id={CONTACT.name} label="Full name" value={form.name} onChange={change("name")} required />
-              <Field id={CONTACT.business} label="Business" value={form.business} onChange={change("business")} />
-              <Field id={CONTACT.email} label="Work email" type="email" value={form.email} onChange={change("email")} required />
-              <Field id={CONTACT.phone} label="Phone" value={form.phone} onChange={change("phone")} />
+              <Field id={CONTACT.name} label="Full name *" value={form.name} onChange={change("name")} error={errors.name} placeholder="Jane Cooper" />
+              <Field id={CONTACT.business} label="Business" value={form.business} onChange={change("business")} placeholder="Acme Inc." />
+              <Field id={CONTACT.email} label="Work email *" type="email" value={form.email} onChange={change("email")} error={errors.email} placeholder="you@company.com" />
+              <Field id={CONTACT.phone} label="Phone" value={form.phone} onChange={change("phone")} placeholder="+91 98765 43210" />
               <Select id={CONTACT.service} label="Service of interest" value={form.service} onChange={change("service")} options={SERVICE_OPTIONS} />
               <Select id={CONTACT.budget} label="Monthly budget" value={form.budget} onChange={change("budget")} options={BUDGET_OPTIONS} />
             </div>
             <div className="mt-4">
-              <label className="block font-mono-label text-[#A8B2D1] mb-2">Tell us about your project</label>
+              <label className="block font-mono-label text-[#A8B2D1] mb-2">Tell us about your project *</label>
               <textarea
                 data-testid={CONTACT.message}
                 rows={5}
                 value={form.message}
                 onChange={change("message")}
-                required
-                className="w-full rounded-xl bg-[#0b1224] border border-white/10 px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[#6C63FF] focus:ring-2 focus:ring-[#6C63FF]/30 transition resize-none"
+                aria-invalid={!!errors.message}
+                className={`w-full rounded-xl bg-[#0b1224] border px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 transition resize-none ${
+                  errors.message ? "border-red-400/60 focus:border-red-400 focus:ring-red-400/30" : "border-white/10 focus:border-[#6C63FF] focus:ring-[#6C63FF]/30"
+                }`}
                 placeholder="Where you are, where you want to go, timelines, anything else…"
               />
+              {errors.message && <FieldError text={errors.message} />}
             </div>
             <button
               type="submit"
@@ -119,14 +153,18 @@ const ContactRow = ({ icon: Icon, label, value, href }) => (
   </div>
 );
 
-const Field = ({ id, label, ...props }) => (
+const Field = ({ id, label, error, ...props }) => (
   <div>
     <label className="block font-mono-label text-[#A8B2D1] mb-2">{label}</label>
     <input
       data-testid={id}
+      aria-invalid={!!error}
       {...props}
-      className="w-full rounded-xl bg-[#0b1224] border border-white/10 px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:border-[#6C63FF] focus:ring-2 focus:ring-[#6C63FF]/30 transition"
+      className={`w-full rounded-xl bg-[#0b1224] border px-4 py-3 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 transition ${
+        error ? "border-red-400/60 focus:border-red-400 focus:ring-red-400/30" : "border-white/10 focus:border-[#6C63FF] focus:ring-[#6C63FF]/30"
+      }`}
     />
+    {error && <FieldError text={error} />}
   </div>
 );
 
@@ -141,5 +179,11 @@ const Select = ({ id, label, value, onChange, options }) => (
     >
       {options.map((o) => <option key={o} value={o} className="bg-[#0b1224]">{o}</option>)}
     </select>
+  </div>
+);
+
+const FieldError = ({ text }) => (
+  <div data-testid="field-error" className="mt-2 flex items-center gap-1.5 text-xs text-red-400">
+    <AlertCircle size={12} /> {text}
   </div>
 );
